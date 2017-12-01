@@ -4,19 +4,29 @@
 #include <cmath>
 #include <ctime>
 
+
 using namespace std;
 
-const int drops = 170;
+
+
+const int drops = 190;
 const int speedFactorRange[3] = {1,5};
 const int posXRange[3] = {1,900};
 const int breakingZoneRange[3] = {350,500};
-const int circleWidthRange[3]= {1,20};
+const int circleWidthRange[3]= {20,30};
 const int circleInit=1;
-const int circleGrowthRange[3]= {1,5};
+const int circleGrowthRange[3]= {1,1};
 const int circleChance=100; ///How likely is it that the drop will break into a circle?
+const int breaksOnE=false;
+const int timeBetweenFrames=0;
+const char keyBindToStop='F';
+const int timeToHoldPressed=300;
+
 
 int random(int min, int max)
 {
+    if(min==max)
+        return min;
     static bool first = true;
     if ( first )
     {
@@ -80,7 +90,8 @@ int nextFrame(droplet rains[1000],int inits)
 }
 int main()
 {
-
+    char keyBindToStop1;
+    keyBindToStop1=tolower(keyBindToStop);
     int gd=DETECT,gm;
     int x=320,y=240,radius;
     // initgraph(&gd, &gm, "C:\\TC\\BGI");
@@ -99,9 +110,16 @@ int main()
             rains[random(1,drops)].init();
         }
         nextFrame(rains,inits);
-        Sleep(100);
+        Sleep(timeBetweenFrames);
+        if(GetAsyncKeyState(int(keyBindToStop1)-32)!=0)
+        {
+            Sleep(timeToHoldPressed);
+            if(GetAsyncKeyState(int(keyBindToStop1)-32)!=0)
+                break;
+        }
     }
     getch();
     closegraph();
     return 0;
 }
+
