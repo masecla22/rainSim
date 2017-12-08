@@ -18,10 +18,11 @@ const int circleInit=1;
 const int circleGrowthRange[3]= {1,1};
 const int circleChance=100; ///How likely is it that the drop will break into a circle?
 const int breaksOnE=false;
-const int timeBetweenFrames=0;
+const int timeBetweenFrames=20;
 const char keyBindToStop='F';
-const int timeToHoldPressed=300;
-
+const int timeToHoldPressed=3000;
+const int style=1; /// 0 = rain 1 = snow
+const int flakesRandom=false;
 
 int random(int min, int max)
 {
@@ -35,6 +36,7 @@ int random(int min, int max)
     }
     return min + rand() % (max - min);
 }
+int layer=0;
 struct droplet
 {
     int pos,velocity,posX,isCircle,CircleWidth=0,speedFactor;
@@ -56,7 +58,10 @@ struct droplet
         if(pos>random(breakingZoneRange[0],breakingZoneRange[1]))
         {
             if(random(1,100)<=circleChance)
+            {
             isCircle=1;
+                layer++;
+            }
             else
                 CircleWidth=1000;
             CircleWidth+=random(circleGrowthRange[0],circleGrowthRange[1]);
@@ -70,13 +75,31 @@ struct droplet
 
     }
 };
-int draws(droplet rains[1000],int i)
+int draws(droplet rains[1000],int i,int style)
 {
     if(rains[i].isCircle==0)
+    {
+        if(style==0)
+        {
         line(rains[i].posX,rains[i].pos,rains[i].posX,rains[i].pos+15);
+
+        }
+        if(style==1)
+        {
+            setcolor(9);
+           line(rains[i].posX,rains[i].pos,rains[i].posX,rains[i].pos+15);
+           line(rains[i].posX-9,rains[i].pos,rains[i].posX+9,rains[i].pos+15);
+           line(rains[i].posX+9,rains[i].pos,rains[i].posX-9,rains[i].pos+15);
+        }
+    }
     else
     {
+        if(style==0)
         ellipse(rains[i].posX,rains[i].pos,360,360,rains[i].CircleWidth,rains[i].CircleWidth/2);
+        if(style==1)
+        {
+        rectangle(0,600,layer,900);
+        }
     }
 }
 int nextFrame(droplet rains[1000],int inits)
@@ -85,7 +108,7 @@ int nextFrame(droplet rains[1000],int inits)
     for(int i=0; i<inits; i++)
     {
         rains[i].nextStep();
-        draws(rains,i);
+        draws(rains,i,style);
     }
 }
 int main()
