@@ -22,7 +22,7 @@ const int timeBetweenFrames=20;
 const char keyBindToStop='F';
 const int timeToHoldPressed=3000;
 const int style=1; /// 0 = rain 1 = snow
-const int flakesRandom=false;
+const int flakesRandom=1;
 
 int random(int min, int max)
 {
@@ -59,7 +59,7 @@ struct droplet
         {
             if(random(1,100)<=circleChance)
             {
-            isCircle=1;
+                isCircle=1;
                 layer++;
             }
             else
@@ -81,26 +81,30 @@ int draws(droplet rains[1000],int i,int style)
     {
         if(style==0)
         {
-        line(rains[i].posX,rains[i].pos,rains[i].posX,rains[i].pos+15);
+            line(rains[i].posX,rains[i].pos,rains[i].posX,rains[i].pos+15);
 
         }
         if(style==1)
         {
             setcolor(9);
-           line(rains[i].posX,rains[i].pos,rains[i].posX,rains[i].pos+15);
-           line(rains[i].posX-9,rains[i].pos,rains[i].posX+9,rains[i].pos+15);
-           line(rains[i].posX+9,rains[i].pos,rains[i].posX-9,rains[i].pos+15);
+            if(flakesRandom==0)
+            {
+                line(rains[i].posX,rains[i].pos,rains[i].posX,rains[i].pos+15);
+                line(rains[i].posX-9,rains[i].pos,rains[i].posX+9,rains[i].pos+15);
+                line(rains[i].posX+9,rains[i].pos,rains[i].posX-9,rains[i].pos+15);
+            }
+            if(flakesRandom==1)
+            {
+                line(rains[i].posX,rains[i].pos-random(-10,10),rains[i].posX,rains[i].pos+15+random(-10,10));
+                line(rains[i].posX-9-random(-10,10),rains[i].pos+random(-10,10),rains[i].posX+9,rains[i].pos+15+random(-10,10));
+                line(rains[i].posX+9,rains[i].pos-random(-10,10),rains[i].posX-9-random(-10,10),rains[i].pos+15+random(-10,10));
+            }
         }
     }
-    else
-    {
-        if(style==0)
-        ellipse(rains[i].posX,rains[i].pos,360,360,rains[i].CircleWidth,rains[i].CircleWidth/2);
-        if(style==1)
-        {
-        rectangle(0,600,layer,900);
+    else{
+        if(style==0)ellipse(rains[i].posX,rains[i].pos,360,360,rains[i].CircleWidth,rains[i].CircleWidth/2);
+        if(style==1)rectangle(0,600,layer,900);
         }
-    }
 }
 int nextFrame(droplet rains[1000],int inits)
 {
